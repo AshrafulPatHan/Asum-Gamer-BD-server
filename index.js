@@ -159,9 +159,23 @@ app.put('/up/:id', async (req, res) => {
 
 run().catch(console.dir);
 
-app.get('/', (req, res) => {
-  res.send('Server is running');
+// app.get('/', (req, res) => {
+//   res.send('Server is running');
+// });
+
+// All data
+app.get('/', async (req, res) => {
+  try {
+    const cursor = onerCollection.find();
+    const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
 });
+
 
 app.listen(Port, () => {
   console.log('Server is running on port', Port);
