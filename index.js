@@ -88,18 +88,7 @@ app.get('/watchListsdata', async (req, res) => {
   }
 });
 
-    // All data
-    app.get('/', async (req, res) => {
-      try {
-        const cursor = onerCollection.find();
-        const result = await cursor.toArray();
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.send(result);
-      } catch (error) {
-        console.error('Error retrieving data:', error);
-        res.status(500).send({ message: 'Internal Server Error' });
-      }
-    });
+
     // All data
     app.get('/alldata', async (req, res) => {
       try {
@@ -171,9 +160,9 @@ app.put('/up/:id', async (req, res) => {
 
 run().catch(console.dir);
 
-// app.get('/', (req, res) => {
-//   res.send('Server is running');
-// });
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
 
 
 
