@@ -8,6 +8,15 @@ const Port = process.env.PORT || 5022;
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+app.listen(Port, () => {
+  console.log('Server is running on port', Port);
+});
+
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PAS}@cluster0.zxihh.mongodb.net/?retryWrites=true&w=majority`;
 
 console.log(process.env.DB_USER, process.env.DB_PAS);
@@ -159,14 +168,4 @@ app.put('/up/:id', async (req, res) => {
 }
 
 run().catch(console.dir);
-
-app.get('/', (req, res) => {
-  res.send('Server is running');
-});
-
-
-
-app.listen(Port, () => {
-  console.log('Server is running on port', Port);
-});
 
