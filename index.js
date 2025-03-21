@@ -6,6 +6,7 @@ const app = express();
 const Port = process.env.PORT || 5022;
 const mongoose = require("mongoose");
 
+
 app.use(cors());
 app.use(express.json());
 
@@ -169,6 +170,7 @@ app.put('/up/:id', async (req, res) => {
     console.error('Error connecting to MongoDB:', error);
   }
 }
+
 
 run().catch(console.dir);
 

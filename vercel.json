@@ -1,4 +1,7 @@
     {
+        "functions": {
+            "index.js": { "runtime": "nodejs" }
+        },
         "version": 2,
         "builds": [
         {
