@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Server is running home');
+  res.send('Server is running Home');
 });
 
 app.listen(Port, () => {
@@ -100,6 +100,7 @@ app.get('/watchListsdata', async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+
 
 
 
