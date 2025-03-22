@@ -102,8 +102,6 @@ app.get('/watchListsdata', async (req, res) => {
 });
 
 
-
-
     // All data
     app.get('/alldata', async (req, res) => {
       try {
