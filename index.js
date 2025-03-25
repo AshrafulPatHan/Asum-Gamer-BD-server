@@ -19,7 +19,7 @@ app.listen(Port, () => {
 });
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PAS}@cluster0.zxihh.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PAS}@cluster0.zxihh.mongodb.net/Chill-Gamer?retryWrites=true&w=majority`;
 
 console.log(process.env.DB_USER, process.env.DB_PAS);
 
