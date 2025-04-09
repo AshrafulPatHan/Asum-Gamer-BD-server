@@ -75,7 +75,7 @@ async function run() {
         res.status(500).send({ message: 'Error inserting data' });
       }
     });
-// home page data
+    // home page data
     app.get('/datas', async (req, res) => {
       try {
         const cursor = userCollection.find();
@@ -173,3 +173,4 @@ app.put('/up/:id', async (req, res) => {
 
 run().catch(console.dir);
 
+// nodemon index.js
