@@ -1,3 +1,5 @@
 node_modules
 a.txt
 .vercel
+.env
+
