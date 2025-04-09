@@ -35,6 +35,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+    // ---------- spam collection ------------
     // user data
     const db = client.db('insertDBaks');
     const userCollection = db.collection('user');
@@ -45,6 +46,17 @@ async function run() {
     // All Data
     const mn = client.db('insertDB');
     const onerCollection = mn.collection('haiku'); 
+
+    // ---------- Asum Gamer BD collection ------------
+
+    const database = client.db('AsumGamerBD');
+    const LoginUser = database.collection('LoginUser');
+    const reviews = database.collection('reviews');
+    const video = database.collection('video');
+    const news = database.collection('news');
+    const shop = database.collection('shop');
+    const chat = database.collection('chat');
+    const spam = database.collection('spam');
 
 // post user data
     app.post('/add', async (req, res) => {
