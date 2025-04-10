@@ -37,7 +37,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    // ---------- spam collection ------------
+    // ---------- chill gamer collection ------------
     // user data
     const db = client.db('insertDBaks');
     const userCollection = db.collection('user');
@@ -60,6 +60,7 @@ async function run() {
     const chat = database.collection('chat');
     const spam = database.collection('spam');
 
+// ------------------------------------------------------- Asum Gamer BD crud operation ---------------
 
 // ------------ Register route ------------
 app.post('/register', async (req, res) => {
@@ -93,6 +94,21 @@ app.post('/google-login', async (req, res) => {
   }
 });
 
+// ----------------- Add Review
+app.post('/add-review',async (req,res) =>{
+  const addReview = req.body;
+  console.log(addReview);
+  try {
+    const result = await reviews.insertOne(addReview);
+    console.log(result.insertedId);
+    res.send(result);
+  }catch(error){
+    console.error("error in add review",error);
+    res.status(500).send({massage:'Error inserting data'}) 
+  }
+});
+
+// ------------------------------------------------------- Chill gamer crud operation ---------------
 // post user data
     app.post('/add', async (req, res) => {
       const addata = req.body;
