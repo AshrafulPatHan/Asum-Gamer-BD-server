@@ -107,7 +107,31 @@ app.post('/add-review',async (req,res) =>{
     res.status(500).send({massage:'Error inserting data'}) 
   }
 });
-
+// ----------------- Post all Review
+app.get('/all-review', async (req, res) => {
+  try {
+    const cursor = reviews.find();
+    const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
+// ----------------- Post Latest Review
+app.get('/all-review', async (req, res) => {
+  try {
+    // const cursor = reviews.find({}).sort({_id:-1}).limit(10,function(err,docs){});
+    const result = await reviews.find({}).sort({_id: -1}).limit(10).toArray();
+    // const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
 // ------------------------------------------------------- Chill gamer crud operation ---------------
 // post user data
     app.post('/add', async (req, res) => {
