@@ -120,7 +120,7 @@ app.get('/all-review', async (req, res) => {
   }
 });
 // ----------------- Post Latest Review
-app.get('/all-review', async (req, res) => {
+app.get('/latest-review', async (req, res) => {
   try {
     // const cursor = reviews.find({}).sort({_id:-1}).limit(10,function(err,docs){});
     const result = await reviews.find({}).sort({_id: -1}).limit(10).toArray();
@@ -132,6 +132,42 @@ app.get('/all-review', async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+// ----------------- Post Higher rate Review
+app.get('/higher-rate-review', async (req, res) => {
+  try {
+    const result = await reviews.find({}).sort({Rating: -1}).limit(10).toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
+//  --------------- add My Review or user review
+app.patch('/comant', async (req, res) => {
+  const { Comment, username, userEmail, userphotoURL, _id } = req.body;
+
+  if (!Comment || !username || !userEmail || !userphotoURL || !_id) {
+      return res.status(400).send({ message: 'All fields are required' });
+  }
+
+  if (!ObjectId.isValid(_id)) {
+      return res.status(400).send({ message: 'Invalid ID format' });
+  }
+
+  try {
+      const filter = { _id: new ObjectId(_id) }; 
+      const updateDoc = {
+          $push: { comments: { Comment, username, userphotoURL,userEmail, date: new Date() } },
+      };
+      const result = await onerCollection.updateOne(filter, updateDoc);
+      res.send(result);
+  } catch (error) {
+      console.error('Error updating comment:', error);
+      res.status(500).send({ message: 'Error updating comment' });
+  }
+});
+
 // ------------------------------------------------------- Chill gamer crud operation ---------------
 // post user data
     app.post('/add', async (req, res) => {
