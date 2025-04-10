@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const Port = process.env.PORT || 5022;
@@ -50,13 +52,46 @@ async function run() {
     // ---------- Asum Gamer BD collection ------------
 
     const database = client.db('AsumGamerBD');
-    const LoginUser = database.collection('LoginUser');
+    const User = database.collection('User');
     const reviews = database.collection('reviews');
     const video = database.collection('video');
     const news = database.collection('news');
     const shop = database.collection('shop');
     const chat = database.collection('chat');
     const spam = database.collection('spam');
+
+
+// ------------ Register route ------------
+app.post('/register', async (req, res) => {
+  try {
+    const { name, email, photoURL, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await User.insertOne({
+      name,
+      email,
+      photoURL,
+      password: hashedPassword
+    });
+    res.status(201).json({ message: "✅ User Registered!" });
+  } catch (error) {
+    res.status(500).send("❌ Registration Error: " + error.message);
+  }
+});
+
+// ---------------- login with google ----------
+app.post('/google-login', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    // if (!user) return res.status(404).send("❌ User not found!");
+    if (!user) {
+      return res.status(200).send({"user":true});
+    }else{
+      return res.status(200).send({"user":false});
+    }
+  } catch (error) {
+    res.status(500).send("❌ Login Error: " + error.message);
+  }
+});
 
 // post user data
     app.post('/add', async (req, res) => {
@@ -87,6 +122,7 @@ async function run() {
         res.status(500).send({ message: 'Error inserting data' });
       }
     });
+
     // home page data
     app.get('/datas', async (req, res) => {
       try {
@@ -99,6 +135,7 @@ async function run() {
         res.status(500).send({ message: 'Internal Server Error' });
       }
     });
+
 // gat watchLists data
 app.get('/watchListsdata', async (req, res) => {
   try {
@@ -112,34 +149,31 @@ app.get('/watchListsdata', async (req, res) => {
   }
 });
 
-
-    // All data
-    app.get('/alldata', async (req, res) => {
-      try {
-        const cursor = onerCollection.find();
-        const result = await cursor.toArray();
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.send(result);
-      } catch (error) {
-        console.error('Error retrieving data:', error);
-        res.status(500).send({ message: 'Internal Server Error' });
-      }
-    });
-
-
-    // MongoDB limit
-    app.get('/limited-data', async (req, res) => {
-      const limit = parseInt(req.query.limit) || 6;
-      try {
-        const cursor = onerCollection.find().limit(limit); 
-        const result = await cursor.toArray();
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.send(result);
-      } catch (error) {
-        console.error('Error retrieving limited data:', error);
-        res.status(500).send({ message: 'Internal Server Error' });
-      }
-    });
+// All data
+app.get('/alldata', async (req, res) => {
+  try {
+    const cursor = onerCollection.find();
+    const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
+// MongoDB limit
+app.get('/limited-data', async (req, res) => {
+  const limit = parseInt(req.query.limit) || 6;
+  try {
+    const cursor = onerCollection.find().limit(limit); 
+    const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
+  } catch (error) {
+    console.error('Error retrieving limited data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+});
 
 // Delete oparation
 app.delete('/user/:id', async (req, res) => { 
@@ -153,7 +187,6 @@ app.delete('/user/:id', async (req, res) => {
 });
 
 // up date
-
 app.put('/up/:id', async (req, res) => {
   const id = req.params.id;
   const filter = { _id: new ObjectId(id) };
