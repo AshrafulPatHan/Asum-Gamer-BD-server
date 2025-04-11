@@ -107,6 +107,41 @@ app.post('/add-review',async (req,res) =>{
     res.status(500).send({massage:'Error inserting data'}) 
   }
 });
+//  --------------- add My Review or user review 
+app.post('/my-review', async (req, res) => {
+  try {
+    const user = await reviews.find({ userEmail: req.body.email });
+    const result = await user.toArray();
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send("❌ review shake is error " + error.message);
+  }
+});
+// ----------------- Add video
+app.post('/add-video',async (req,res) =>{
+  const addVideo = req.body;
+  console.log(addVideo);
+  try {
+    const result = await video.insertOne(addVideo);
+    console.log(result.insertedId);
+    res.send(result);
+  }catch(error){
+    console.error("error in add video",error);
+    res.status(500).send({massage:'Error inserting data'}) 
+  }
+});
+// --------------- Add news data
+app.post('/add-news',async (req,res) =>{
+  const addNews = req.body;
+  try{
+    const result = await news.insertOne(addNews);
+    res.send(result)
+  }catch (error){
+    console.error("error in add news",error)
+    res.status(500).send({massage:"error inserting data"})
+  }
+})
+                                                // get request
 // ----------------- Post all Review
 app.get('/all-review', async (req, res) => {
   try {
@@ -119,6 +154,7 @@ app.get('/all-review', async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+
 // ----------------- Post Latest Review
 app.get('/latest-review', async (req, res) => {
   try {
@@ -143,16 +179,31 @@ app.get('/higher-rate-review', async (req, res) => {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 });
-//  --------------- add My Review or user review
-app.post('/my-review', async (req, res) => {
+// ----------------- Post all video
+app.get('/video', async (req, res) => {
   try {
-    const user = await reviews.find({ userEmail: req.body.email });
-    const result = await user.toArray();
-    return res.status(200).send(result);
+    const cursor = video.find();
+    const result = await cursor.toArray();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.send(result);
   } catch (error) {
-    res.status(500).send("❌ review shake is error " + error.message);
+    console.error('Error retrieving data:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+// ----------------- Get all News
+app.get('/news', async (req,res) =>{
+  try{
+    const News = news.find();
+    const result = await News.toArray();
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.send(result);
+  }catch (error){
+    console.error('Error retrieving data:',error);
+    res.status(500).send({message: 'Internal Server Error'});
+  }
+})
+
 
 
 // ------------------------------------------------------- Chill gamer crud operation ---------------
