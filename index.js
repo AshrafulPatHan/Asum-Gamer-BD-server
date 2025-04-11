@@ -159,7 +159,7 @@ app.get('/all-review', async (req, res) => {
 app.get('/latest-review', async (req, res) => {
   try {
     // const cursor = reviews.find({}).sort({_id:-1}).limit(10,function(err,docs){});
-    const result = await reviews.find({}).sort({_id: -1}).limit(10).toArray();
+    const result = await reviews.find({}).sort({_id: -1}).limit(4).toArray();
     // const result = await cursor.toArray();
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(result);
@@ -171,7 +171,7 @@ app.get('/latest-review', async (req, res) => {
 // ----------------- Post Higher rate Review
 app.get('/higher-rate-review', async (req, res) => {
   try {
-    const result = await reviews.find({}).sort({Rating: -1}).limit(10).toArray();
+    const result = await reviews.find({}).sort({Rating: -1}).limit(4).toArray();
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(result);
   } catch (error) {
