@@ -144,29 +144,7 @@ app.get('/higher-rate-review', async (req, res) => {
   }
 });
 //  --------------- add My Review or user review
-app.patch('/comant', async (req, res) => {
-  const { Comment, username, userEmail, userphotoURL, _id } = req.body;
 
-  if (!Comment || !username || !userEmail || !userphotoURL || !_id) {
-      return res.status(400).send({ message: 'All fields are required' });
-  }
-
-  if (!ObjectId.isValid(_id)) {
-      return res.status(400).send({ message: 'Invalid ID format' });
-  }
-
-  try {
-      const filter = { _id: new ObjectId(_id) }; 
-      const updateDoc = {
-          $push: { comments: { Comment, username, userphotoURL,userEmail, date: new Date() } },
-      };
-      const result = await onerCollection.updateOne(filter, updateDoc);
-      res.send(result);
-  } catch (error) {
-      console.error('Error updating comment:', error);
-      res.status(500).send({ message: 'Error updating comment' });
-  }
-});
 
 // ------------------------------------------------------- Chill gamer crud operation ---------------
 // post user data
