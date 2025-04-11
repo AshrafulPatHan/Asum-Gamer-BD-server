@@ -144,6 +144,15 @@ app.get('/higher-rate-review', async (req, res) => {
   }
 });
 //  --------------- add My Review or user review
+app.post('/my-review', async (req, res) => {
+  try {
+    const user = await reviews.find({ userEmail: req.body.email });
+    const result = await user.toArray();
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send("❌ review shake is error " + error.message);
+  }
+});
 
 
 // ------------------------------------------------------- Chill gamer crud operation ---------------
