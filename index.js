@@ -107,7 +107,7 @@ app.post('/add-review',async (req,res) =>{
     res.status(500).send({massage:'Error inserting data'}) 
   }
 });
-//  --------------- add My Review or user review 
+//  --------------- catch My Review or user review 
 app.post('/my-review', async (req, res) => {
   try {
     const user = await reviews.find({ userEmail: req.body.email });
