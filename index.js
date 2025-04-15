@@ -141,6 +141,32 @@ app.post('/add-news',async (req,res) =>{
     res.status(500).send({massage:"error inserting data"})
   }
 })
+// --------------- post comment
+app.patch('/comment', async (req, res) => {
+  const { Comment, username, userEmail, userPhotoURL, _id } = req.body;
+
+  if (!Comment || !username || !userEmail || !userPhotoURL || !_id) {
+      return res.status(400).send({ message: 'All fields are required' });
+  }
+
+  if (!ObjectId.isValid(_id)) {
+      return res.status(400).send({ message: 'Invalid ID format' });
+  }
+
+  try {
+      const filter = { _id: new ObjectId(_id) }; 
+      const updateDoc = {
+          $push: { comments: { Comment, username, userPhotoURL,userEmail, date: new Date() } },
+      };
+      const result = await reviews.updateOne(filter, updateDoc);
+      res.send(result);
+  } catch (error) {
+      console.error('Error updating comment:', error);
+      res.status(500).send({ message: 'Error updating comment' });
+  }
+});
+
+
                                                 // get request
 // ----------------- Post all Review
 app.get('/all-review', async (req, res) => {
