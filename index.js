@@ -81,7 +81,6 @@ async function run() {
         Agency
       });
       res.send(result);
-      res.status(201).json({ message: "✅ User Registered!" });
     } catch (error) {
       res.status(500).send("❌ Registration Error: " + error.message);
     }
@@ -116,7 +115,7 @@ app.post('/register', async (req, res) => {
       password: hashedPassword
     });
     res.send(result);
-    res.status(201).json({ message: "✅ User Registered!" });
+    // res.status(201).json({ message: "✅ User Registered!" });
   } catch (error) {
     res.status(500).send("❌ Registration Error: " + error.message);
   }
