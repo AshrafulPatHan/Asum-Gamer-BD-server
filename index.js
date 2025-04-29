@@ -56,6 +56,7 @@ async function run() {
     const reviews = database.collection('reviews');
     const video = database.collection('video');
     const news = database.collection('news');
+    const watchLists = database.collection('watchLists');
     const shop = database.collection('shop');
     const chat = database.collection('chat');
     const spam = database.collection('spam');
@@ -141,6 +142,29 @@ app.post('/add-news',async (req,res) =>{
     res.status(500).send({massage:"error inserting data"})
   }
 })
+// post watchLists data
+app.post('/watchLists', async (req, res) => {
+  const addatas = req.body;
+  console.log('All watchLists-------------', addatas);
+  try {
+    const result = await watchLists.insertOne(addatas);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+    res.send(result);
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    res.status(500).send({ message: 'Error inserting data' });
+  }
+});
+//  --------------- catch my watchLists 
+app.post('/my-watchLists', async (req, res) => {
+  try {
+    const user = await watchLists.find({ userEmail: req.body.email });
+    const result = await user.toArray();
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send("❌ review shake is error " + error.message);
+  }
+});
 // --------------- post comment
 app.patch('/comment', async (req, res) => {
   const { Comment, username, userEmail, userPhotoURL, _id } = req.body;
