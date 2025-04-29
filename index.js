@@ -70,14 +70,15 @@ async function run() {
   // registration
   app.post('/registration-p', async (req, res) => {
     try {
-      const { name,number,email,password,company } = req.body;
+      const { name,number,email,password,company,Agency } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
       const result = await UserPopX.insertOne({
         name,
         number,
         email,
         password: hashedPassword,
-        company
+        company,
+        Agency
       });
       res.send(result);
       res.status(201).json({ message: "✅ User Registered!" });
@@ -85,7 +86,21 @@ async function run() {
       res.status(500).send("❌ Registration Error: " + error.message);
     }
   });
-  
+  // ------------ Login route ------------
+  app.post('/login-p', async (req, res) => {
+    try {
+      const user = await UserPopX.findOne({ email: req.body.email });
+      if (!user) return res.status(404).send("❌ User not found!");
+
+      const validPassword = await bcrypt.compare(req.body.password, user.password);
+      if (!validPassword) return res.status(401).send("❌ Invalid credentials!");
+
+      const token = jwt.sign({ id: user._id }, "secret_key", { expiresIn: '1h' });
+      res.status(200).send({ token });
+    } catch (error) {
+      res.status(500).send("❌ Login Error: " + error.message);
+    }
+  });
 
 // ------------------------------------------------------- Asum Gamer BD crud operation ---------------
 
