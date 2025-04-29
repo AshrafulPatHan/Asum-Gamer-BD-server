@@ -61,7 +61,31 @@ async function run() {
     const chat = database.collection('chat');
     const spam = database.collection('spam');
 
+    // ------------------- jov task
+    const TaskData = client.db('PopX');
+    const UserPopX = TaskData.collection('UserPopX');
 
+// -------------------------- Jove Task ---
+
+  // registration
+  app.post('/registration-p', async (req, res) => {
+    try {
+      const { name,number,email,password,company } = req.body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const result = await UserPopX.insertOne({
+        name,
+        number,
+        email,
+        password: hashedPassword,
+        company
+      });
+      res.send(result);
+      res.status(201).json({ message: "✅ User Registered!" });
+    } catch (error) {
+      res.status(500).send("❌ Registration Error: " + error.message);
+    }
+  });
+  
 
 // ------------------------------------------------------- Asum Gamer BD crud operation ---------------
 
@@ -76,6 +100,7 @@ app.post('/register', async (req, res) => {
       photoURL,
       password: hashedPassword
     });
+    res.send(result);
     res.status(201).json({ message: "✅ User Registered!" });
   } catch (error) {
     res.status(500).send("❌ Registration Error: " + error.message);
@@ -369,29 +394,7 @@ app.put('/up/:id', async (req, res) => {
     },
   };
 
-// -------------------------- Jove Task ---
-  const TaskData = client.db('PopX');
-  const UserPopx = TaskData.collection('User')
 
-  // registation
-  app.post('/registration-popx', async (req, res) => {
-  try {
-    const { name,number,email,password,company } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await UserPopx.insertOne({
-      name,
-      number,
-      email,
-      company,
-      password: hashedPassword
-    });
-    res.status(201).json({ message: "✅ User Registered!" });
-  } catch (error) {
-    res.status(500).send("❌ Registration Error: " + error.message);
-  }
-});
-
-// ----------------
 
   const result = await userCollection.updateOne(filter, updateDoc, { upsert: true });
   res.send(result);
