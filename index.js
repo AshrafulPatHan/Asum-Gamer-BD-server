@@ -61,6 +61,8 @@ async function run() {
     const chat = database.collection('chat');
     const spam = database.collection('spam');
 
+
+
 // ------------------------------------------------------- Asum Gamer BD crud operation ---------------
 
 // ------------ Register route ------------
@@ -366,6 +368,30 @@ app.put('/up/:id', async (req, res) => {
       genre: updateData.genre,
     },
   };
+
+// -------------------------- Jove Task ---
+  const TaskData = client.db('PopX');
+  const UserPopx = TaskData.collection('User')
+
+  // registation
+  app.post('/registration-popx', async (req, res) => {
+  try {
+    const { name,number,email,password,company } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await UserPopx.insertOne({
+      name,
+      number,
+      email,
+      company,
+      password: hashedPassword
+    });
+    res.status(201).json({ message: "✅ User Registered!" });
+  } catch (error) {
+    res.status(500).send("❌ Registration Error: " + error.message);
+  }
+});
+
+// ----------------
 
   const result = await userCollection.updateOne(filter, updateDoc, { upsert: true });
   res.send(result);
