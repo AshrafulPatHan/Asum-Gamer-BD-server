@@ -100,6 +100,17 @@ async function run() {
       res.status(500).send("❌ Login Error: " + error.message);
     }
   });
+  
+  //  --------------- catch my watchLists 
+  app.post('/user-data-popx', async (req, res) => {
+    try {
+      const user = await UserPopX.find({ email: req.body.email });
+      const result = await user.toArray();
+      return res.status(200).send(result);
+    } catch (error) {
+      res.status(500).send("❌ review shake is error " + error.message);
+    }
+  });
 
 // ------------------------------------------------------- Asum Gamer BD crud operation ---------------
 
