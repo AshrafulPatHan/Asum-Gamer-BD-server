@@ -3,10 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const connectDB = require("./DB/db");
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
-const Port = process.env.PORT || 5022;
-const mongoose = require("mongoose");
+const PORT = process.env.PORT || 5022;
+
 
 
 app.use(cors());
@@ -16,21 +17,17 @@ app.get('/', (req, res) => {
   res.send('Server is running Home');
 });
 
-app.listen(Port, () => {
-  console.log('Server is running on port', Port);
-});
 
+connectDB().then((collections) => {
+  const publicRoutes = require("./routes/PublicRoutes")(collections);
+  const adminRoutes = require("./routes/AdminRoutes")(collections);
+  const UserRoutes = require("./routes/userRoutes")(collections);
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PAS}@cluster0.zxihh.mongodb.net/Chill-Gamer?retryWrites=true&w=majority`;
+  app.use(publicRoutes);
+  app.use(UserRoutes);
+  app.use("/admin", adminRoutes);
 
-console.log(process.env.DB_USER, process.env.DB_PAS);
-
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+  app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 });
 
 
