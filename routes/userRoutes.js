@@ -6,7 +6,7 @@ module.exports = (collections) => {
 
 
 // ------------ Register route ------------
-app.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { name, email, photoURL, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,7 +24,7 @@ app.post('/register', async (req, res) => {
 });
 
 // ---------------- login with google ----------
-app.post('/google-login', async (req, res) => {
+router.post('/google-login', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
         // if (!user) return res.status(404).send("❌ User not found!");
@@ -39,7 +39,7 @@ app.post('/google-login', async (req, res) => {
 });
 
 // ----------------- Add Review
-app.post('/add-review',async (req,res) =>{
+router.post('/add-review',async (req,res) =>{
     const addReview = req.body;
     console.log(addReview);
     try {
@@ -52,7 +52,7 @@ app.post('/add-review',async (req,res) =>{
     }
 });
 //  --------------- catch My Review or user review 
-app.post('/my-review', async (req, res) => {
+router.post('/my-review', async (req, res) => {
     try {
         const user = await reviews.find({ userEmail: req.body.email });
         const result = await user.toArray();
@@ -64,7 +64,7 @@ app.post('/my-review', async (req, res) => {
 
 
 // post watchLists data
-app.post('/watchLists', async (req, res) => {
+router.post('/watchLists', async (req, res) => {
     const addData = req.body;
     console.log('All watchLists-------------', addData);
     try {
@@ -77,7 +77,7 @@ app.post('/watchLists', async (req, res) => {
     }
 });
 //  --------------- catch my watchLists 
-app.post('/my-watchLists', async (req, res) => {
+router.post('/my-watchLists', async (req, res) => {
     try {
         const user = await watchLists.find({ userEmail: req.body.email });
         const result = await user.toArray();
@@ -87,7 +87,7 @@ app.post('/my-watchLists', async (req, res) => {
     }
 });
 // --------------- post comment
-app.patch('/comment', async (req, res) => {
+router.patch('/comment', async (req, res) => {
     const { Comment, username, userEmail, userPhotoURL, _id } = req.body;
 
     if (!Comment || !username || !userEmail || !userPhotoURL || !_id) {

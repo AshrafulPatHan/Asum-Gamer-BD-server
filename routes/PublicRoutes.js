@@ -6,7 +6,7 @@ module.exports = (collections) => {
 
 
 // ----------------- Post all Review
-app.get('/all-review', async (req, res) => {
+router.get('/all-review', async (req, res) => {
     try {
         const cursor = reviews.find();
         const result = await cursor.toArray();
@@ -19,7 +19,7 @@ app.get('/all-review', async (req, res) => {
 });
 
 // ----------------- Post Latest Review
-app.get('/latest-review', async (req, res) => {
+router.get('/latest-review', async (req, res) => {
     try {
         // const cursor = reviews.find({}).sort({_id:-1}).limit(10,function(err,docs){});
         const result = await reviews.find({}).sort({_id: -1}).limit(4).toArray();
@@ -33,7 +33,7 @@ app.get('/latest-review', async (req, res) => {
 });
 
 // ----------------- Post Higher rate Review
-app.get('/higher-rate-review', async (req, res) => {
+router.get('/higher-rate-review', async (req, res) => {
     try {
         const result = await reviews.find({}).sort({Rating: -1}).limit(4).toArray();
         res.setHeader('Access-Control-Allow-Origin', '*');
@@ -45,7 +45,7 @@ app.get('/higher-rate-review', async (req, res) => {
 });
 
 // ----------------- Post all video
-app.get('/video', async (req, res) => {
+router.get('/video', async (req, res) => {
     try {
         const cursor = video.find();
         const result = await cursor.toArray();
@@ -58,7 +58,7 @@ app.get('/video', async (req, res) => {
 });
 
 // ----------------- Get all News
-app.get('/news', async (req,res) =>{
+router.get('/news', async (req,res) =>{
     try{
         const News = news.find();
         const result = await News.toArray();

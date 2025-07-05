@@ -5,7 +5,7 @@ module.exports = (collections) => {
     const { User,reviews,video,news,watchLists,shop,chat,spam } = collections;
 
 // ----------------- Add video
-app.post('/add-video',async (req,res) =>{
+router.post('/add-video',async (req,res) =>{
     const addVideo = req.body;
     console.log(addVideo);
     try {
@@ -19,7 +19,7 @@ app.post('/add-video',async (req,res) =>{
 });
 
 // --------------- Add news data
-app.post('/add-news',async (req,res) =>{
+router.post('/add-news',async (req,res) =>{
     const addNews = req.body;
     try{
         const result = await news.insertOne(addNews);
