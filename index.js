@@ -243,7 +243,7 @@ app.patch('/comment', async (req, res) => {
 });
 
 
-                                                // get request
+  // get request
 // ----------------- Post all Review
 app.get('/all-review', async (req, res) => {
   try {
