@@ -18,7 +18,7 @@ async function connectDB() {
         
         const db = client.db("AsumGamerBD");
         return {
-            Mail: db.collection("Mail"),
+            // Mail: db.collection("Mail"), 
             User: db.collection('User'),
             reviews: db.collection('reviews'),
             video: db.collection('video'),
