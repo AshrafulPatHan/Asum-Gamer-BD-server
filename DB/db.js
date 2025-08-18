@@ -22,7 +22,7 @@ async function connectDB() {
             User: db.collection('User'),
             reviews: db.collection('reviews'),
             video: db.collection('video'),
-            news: db.collection('news'),
+            blog: db.collection('blog'),
             watchLists: db.collection('watchLists'),
             shop: db.collection('shop'),
             chat: db.collection('chat'),

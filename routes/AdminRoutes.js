@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (collections) => {
-    const { User,reviews,video,news,watchLists,shop,chat,spam } = collections;
+    const { User,reviews,video,blog,watchLists,shop,chat,spam } = collections;
 
 // ----------------- Add video
 router.post('/add-video',async (req,res) =>{
@@ -18,17 +18,20 @@ router.post('/add-video',async (req,res) =>{
     }
 });
 
-// --------------- Add news data
+// --------------- Add Blog data
 router.post('/add-news',async (req,res) =>{
-    const addNews = req.body;
+    const addBlog = req.body;
     try{
-        const result = await news.insertOne(addNews);
+        const result = await blog.insertOne(addBlog);
         res.send(result)
     }catch (error){
         console.error("error in add news",error)
         res.status(500).send({massage:"error inserting data"})
     }
 })
+
+// --------------- All review
+// --------------- All blog
 
 return router;
 };

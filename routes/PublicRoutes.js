@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 module.exports = (collections) => {
-    const { User,reviews,video,news,watchLists,shop,chat,spam } = collections;
+    const { User,reviews,video,blog,watchLists,shop,chat,spam } = collections;
 
 
 // ----------------- Post all Review
@@ -58,10 +58,10 @@ router.get('/video', async (req, res) => {
 });
 
 // ----------------- Get all News
-router.get('/news', async (req,res) =>{
+router.get('/blog', async (req,res) =>{
     try{
-        const News = news.find();
-        const result = await News.toArray();
+        const Blog = blog.find();
+        const result = await Blog.toArray();
         res.setHeader('Access-Control-Allow-Origin','*');
         res.send(result);
     }catch (error){
