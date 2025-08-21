@@ -1,5 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
+const JWT_SECRET = "your_secret_key";
+
 
 module.exports = (collections) => {
     const { User,reviews,video,news,watchLists,shop,chat,spam } = collections;
@@ -23,6 +28,69 @@ router.post('/register', async (req, res) => {
     }
 });
 
+  // ------------ Login with Email + Password ------------
+router.post("/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      const user = await User.findOne({ email });
+      if (!user) return res.status(404).json({ message: "User not found!" });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ message: "Invalid password!" });
+
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        JWT_SECRET,
+        { expiresIn: "1h" } // 1 ঘণ্টা পর expire হবে
+      );
+
+      res.json({
+        message: "✅ Login Success!",
+        token,
+        user: { name: user.name, email: user.email, photoURL: user.photoURL },
+      });
+    } catch (error) {
+      res.status(500).send("❌ Login Error: " + error.message);
+    }
+});
+
+// verify the user
+function verifyToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
+
+  if (!token) return res.status(401).json({ message: "No token provided!" });
+
+  jwt.verify(token, JWT_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json({ message: "Invalid token!" });
+    req.user = decoded; // user data এখানে থাকবে
+    next();
+  });
+}
+
+// private rout api 
+router.get("/verify", verifyToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ valid: false, message: "Unauthorized" });
+    }
+
+    // চাইলে ডাটাবেস থেকে ইউজারের তথ্য আবার যাচাই করতে পারো
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) {
+      return res.status(404).json({ valid: false, message: "User not found" });
+    }
+
+    res.json({ valid: true, user: { name: user.name, email: user.email } });
+  } catch (error) {
+    console.error("❌ Verify API Error:", error.message);
+    res.status(500).json({ valid: false, message: "Internal server error" });
+  }
+});
+
+
 // ---------------- login with google ----------
 router.post('/google-login', async (req, res) => {
     try {
@@ -38,8 +106,20 @@ router.post('/google-login', async (req, res) => {
     }
 });
 
+// user profile
+router.get("/profile", verifyToken, async (req, res) => {
+    try{
+        const user = await User.findOne({ email: req.user.email });
+        res.json(user);
+    }catch(error){
+        console.error("server error on see profile")
+        res.status(500).send("error is coming :",error)
+    }
+});
+
+
 // ----------------- Add Review
-router.post('/add-review',async (req,res) =>{
+router.post('/add-review',verifyToken,async (req,res) =>{
     const addReview = req.body;
     console.log(addReview);
     try {
@@ -52,7 +132,7 @@ router.post('/add-review',async (req,res) =>{
     }
 });
 //  --------------- catch My Review or user review 
-router.post('/my-review', async (req, res) => {
+router.post('/my-review',verifyToken, async (req, res) => {
     try {
         const user = await reviews.find({ userEmail: req.body.email });
         const result = await user.toArray();
@@ -62,9 +142,8 @@ router.post('/my-review', async (req, res) => {
     }
 });
 
-
 // post watchLists data
-router.post('/watchLists', async (req, res) => {
+router.post('/watchLists',verifyToken, async (req, res) => {
     const addData = req.body;
     console.log('All watchLists-------------', addData);
     try {
@@ -77,7 +156,7 @@ router.post('/watchLists', async (req, res) => {
     }
 });
 //  --------------- catch my watchLists 
-router.post('/my-watchLists', async (req, res) => {
+router.post('/my-watchLists',verifyToken, async (req, res) => {
     try {
         const user = await watchLists.find({ userEmail: req.body.email });
         const result = await user.toArray();
@@ -87,7 +166,7 @@ router.post('/my-watchLists', async (req, res) => {
     }
 });
 // --------------- post comment
-router.patch('/comment', async (req, res) => {
+router.patch('/comment',verifyToken, async (req, res) => {
     const { Comment, username, userEmail, userPhotoURL, _id } = req.body;
 
     if (!Comment || !username || !userEmail || !userPhotoURL || !_id) {
