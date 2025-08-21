@@ -65,7 +65,7 @@ function verifyToken(req, res, next) {
 
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ message: "Invalid token!" });
-    req.user = decoded; // user data এখানে থাকবে
+    req.user = decoded; // user data 
     next();
   });
 }
