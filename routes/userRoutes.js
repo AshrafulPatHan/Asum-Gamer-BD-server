@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
       const token = jwt.sign(
         { id: user._id, email: user.email },
         JWT_SECRET,
-        { expiresIn: "1h" } // 1 ঘণ্টা পর expire হবে
+        { expiresIn: "15d" } 
       );
 
       res.json({
@@ -77,7 +77,7 @@ router.get("/verify", verifyToken, async (req, res) => {
       return res.status(401).json({ valid: false, message: "Unauthorized" });
     }
 
-    // চাইলে ডাটাবেস থেকে ইউজারের তথ্য আবার যাচাই করতে পারো
+    // user is verify by database
     const user = await User.findOne({ email: req.user.email });
     if (!user) {
       return res.status(404).json({ valid: false, message: "User not found" });
@@ -95,7 +95,6 @@ router.get("/verify", verifyToken, async (req, res) => {
 router.post('/google-login', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        // if (!user) return res.status(404).send("❌ User not found!");
         if (!user) {
         return res.status(200).send({"user":true});
         }else{
