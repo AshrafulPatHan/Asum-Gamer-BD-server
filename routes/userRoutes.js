@@ -136,7 +136,7 @@ router.post('/google-login', async (req, res) => {
             { expiresIn: "15d" }
         );
 
-        return res.status(200).send({"message":false,"user": {name: RegUser.name, email: RegUser.email, photoURL: RegUser.photoURL}});
+        return res.status(200).send({"message":false,token,"user": {name: RegUser.name, email: RegUser.email, photoURL: RegUser.photoURL}});
         }
     } catch (error) {
         res.status(500).send("❌ Login Error: " + error.message);
