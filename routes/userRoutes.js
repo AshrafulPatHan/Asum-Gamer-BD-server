@@ -94,11 +94,49 @@ router.get("/verify", verifyToken, async (req, res) => {
 // ---------------- login with google ----------
 router.post('/google-login', async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email });
-        if (!user) {
-        return res.status(200).send({"user":true});
-        }else{
-        return res.status(200).send({"user":false});
+        const { UserEmail,UserName,UserPhoto } = req.body;
+        const user = await User.findOne({ email: UserEmail });
+        if (!user) { // if user is exist the server send login token
+
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            JWT_SECRET,
+            { expiresIn: "15d" } 
+        );
+
+        return res.status(200).send({"message":true,token,"user": { name: user.name, email: user.email, photoURL: user.photoURL }});
+
+        }else{ // if user is not exist new user is create and server send login token
+            function generateSecureRandomString(length) {
+                const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                let result = "";
+                const array = new Uint32Array(length);
+                crypto.getRandomValues(array);
+                for (let i = 0; i < length; i++) {
+                    result += chars[array[i] % chars.length];
+                }
+                return result;
+            }
+            
+            const password = generateSecureRandomString(10)
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            const result = await User.insertOne({ // send the data on database
+            name:UserName,
+            email:UserEmail,
+            photoURL:UserPhoto,
+            password: hashedPassword
+        });
+
+        const RegUser = await User.findOne({email:UserEmail}); // search the user on database
+
+        const token = jwt.sign(
+            { id:RegUser._id,email:RegUser.email},
+            JWT_SECRET,
+            { expiresIn: "15d" }
+        );
+
+        return res.status(200).send({"message":false,"user": {name: RegUser.name, email: RegUser.email, photoURL: RegUser.photoURL}});
         }
     } catch (error) {
         res.status(500).send("❌ Login Error: " + error.message);
