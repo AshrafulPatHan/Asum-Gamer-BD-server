@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('Server is running 1.3');
+  res.send('Server is running 1.4');
 });
 
 
