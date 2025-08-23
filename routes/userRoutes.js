@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { ObjectId } = require("mongodb");
+
 
 const JWT_SECRET = `${process.env.KEY}`;
 
@@ -179,24 +181,34 @@ router.post('/my-review',verifyToken, async (req, res) => {
     }
 });
 
-// post watchLists data
-router.post('/watchLists',verifyToken, async (req, res) => {
-    const addData = req.body;
-    console.log('All watchLists-------------', addData);
+// post watchLists/love review data
+router.patch('/love',verifyToken, async (req, res) => {
+    const {ReviewId,userEmail} = req.body;
+    
+    if (!ReviewId || !userEmail) {
+        return res.status(400).send({ message: "All fields are required" })
+    }
+
     try {
-        const result = await watchLists.insertOne(addData);
-        console.log(`A document was inserted with the _id: ${result.insertedId}`);
-        res.send(result);
+        const user = await User.find({ email: userEmail });
+        const filter = {_id: new ObjectId(user._id)};
+        const likeGame = {
+            $push: ReviewId,
+        }
+        const result = User.updateOne(likeGame);
+        res.status(200).send(result)
     } catch (error) {
-        console.error('Error inserting data:', error);
-        res.status(500).send({ message: 'Error inserting data' });
+        console.error('Error updating comment:', error);
+        res.status(500).send({ message: 'Error is coming on lick' });
     }
 });
 //  --------------- catch my watchLists 
-router.post('/my-watchLists',verifyToken, async (req, res) => {
+router.post('/my-licks',verifyToken, async (req, res) => {
     try {
-        const user = await watchLists.find({ userEmail: req.body.email });
-        const result = await user.toArray();
+        const {userEmail} = req.body;
+        const user = await User.find({ email: userEmail });
+        const AllGamesLick = user.likeGame;
+        const result = await AllGamesLick.toArray();
         return res.status(200).send(result);
     } catch (error) {
         res.status(500).send("❌ review shake is error " + error.message);
