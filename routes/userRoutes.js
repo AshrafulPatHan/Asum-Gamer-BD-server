@@ -182,38 +182,61 @@ router.post('/my-review',verifyToken, async (req, res) => {
 });
 
 // post watchLists/love review data
-router.patch('/love',verifyToken, async (req, res) => {
+router.patch('/lick',verifyToken, async (req, res) => {
     const {ReviewId,userEmail} = req.body;
     
     if (!ReviewId || !userEmail) {
         return res.status(400).send({ message: "All fields are required" })
     }
+    console.log(ReviewId,userEmail);
 
     try {
-        const user = await User.find({ email: userEmail });
-        const filter = {_id: new ObjectId(user._id)};
-        const likeGame = {
-            $push: ReviewId,
+        const user = await User.findOne({ email: userEmail });
+       
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
         }
-        const result = User.updateOne(likeGame);
+        console.log(user._id,user.email)
+
+        const filter = {_id: new ObjectId(user._id)}; // for find the user
+        const likeGame = {
+            $push: { likedReviews: ReviewId }, // push the review id which user like
+        }
+
+        const result = User.updateOne(filter,likeGame); // mix the data
         res.status(200).send(result)
     } catch (error) {
-        console.error('Error updating comment:', error);
+        console.error('Error give like:', error);
         res.status(500).send({ message: 'Error is coming on lick' });
     }
 });
 //  --------------- catch my watchLists 
 router.post('/my-licks',verifyToken, async (req, res) => {
-    try {
-        const {userEmail} = req.body;
-        const user = await User.find({ email: userEmail });
-        const AllGamesLick = user.likeGame;
-        const result = await AllGamesLick.toArray();
-        return res.status(200).send(result);
-    } catch (error) {
-        res.status(500).send("❌ review shake is error " + error.message);
+  try {
+    const { userEmail } = req.body;
+
+    // find user
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
     }
+
+    // convert string IDs to ObjectId
+    const reviewIds = user.likedReviews.map(id => new ObjectId(id));
+
+    // find all reviews by IDs
+    const likedReviewsData = await reviews.find({ _id: { $in: reviewIds } }).toArray();
+
+    return res.status(200).send({
+      likedReviews: user.likedReviews,
+      reviews: likedReviewsData 
+    });
+
+  } catch (error) {
+    res.status(500).send("❌ review fetch error: " + error.message);
+  }
 });
+
 // --------------- post comment
 router.patch('/comment',verifyToken, async (req, res) => {
     const { Comment, username, userEmail, userPhotoURL, _id } = req.body;
